@@ -19,7 +19,7 @@ def emit(writer, **kwargs):
     modules.cuml_dev.emit(writer, **kwargs)
 
 
-rapidsVersion = "0.10"
+rapidsVersion = "0.11"
 def images():
     return {
         "ml-dev:9.2": { "cudaVersionFull": "9.2.88",
