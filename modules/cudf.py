@@ -23,11 +23,11 @@ def emit(writer, rapidsVersion):
         "arrow-cpp=$arrowVersion", "boost", "double-conversion",
         "rapidjson", "flatbuffers", "hypothesis"] +
         added_packages,
-        channels=["numba", "conda-forge",
+        channels=["numba",
                 "nvidia/label/cuda$$CUDA_VERSION_SHORT",
                 "rapidsai/label/cuda$$CUDA_VERSION_SHORT",
                 "rapidsai-nightly/label/cuda$$CUDA_VERSION_SHORT",
-                "defaults"],
+                "conda-forge", "defaults"],
         rapidsVersion=rapidsVersion,
         daskVersion=daskVersion,
         distributedVersion=distributedVersion,

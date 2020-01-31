@@ -2,9 +2,8 @@ from __future__ import absolute_import
 import modules.cuda_dev
 import modules.runas
 import modules.ssh
-import modules.conda_ml_env
-import modules.cudf
-import modules.cuml
+import modules.conda
+import modules.rapids
 import modules.xgboost
 
 
@@ -13,15 +12,18 @@ def emit(writer, **kwargs):
         raise Exception("'cudaVersionFull' is mandatory!")
     if "rapidsVersion" not in kwargs:
         raise Exception("'rapidsVersion' is mandatory!")
+    if "cumlPrimsVersion" not in kwargs:
+        raise Exception("'cumlPrimsVersion' is mandatory!")
     ncclVersion = "2.4"  # should be good for rapids 0.10+
     cudaVersionFull = kwargs["cudaVersionFull"]
     rapidsVersion = kwargs["rapidsVersion"]
     modules.cuda_dev.emit(writer, cudaVersionFull)
-    modules.conda_ml_env.emit(writer)
+    modules.conda.emit(writer)
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
-    modules.cudf.emit(writer, rapidsVersion=rapidsVersion)
-    modules.cuml.emit(writer, rapidsVersion=rapidsVersion)
+    modules.rapids.emit(writer,
+        rapidsVersion=rapidsVersion,
+        cumlPrimsVersion=kwargs["cumlPrimsVersion"])
 
     # include the below for xgboost and NSight added
 
@@ -40,15 +42,21 @@ def emit(writer, **kwargs):
 # ENV LD_LIBRARY_PATH=/usr/local/cuda/NsightSystems/Host-x86_64/:$${LD_LIBRARY_PATH}""")
 
 
-rapidsVersion = "0.11"
 def images():
     return {
-        "cudf-debug:9.2": { "cudaVersionFull": "9.2.88",
+        "rapids-0.11:9.2": { "cudaVersionFull": "9.2.88",
                             "base": "ubuntu:16.04",
                             "needsContext": True,
-                            "rapidsVersion": rapidsVersion },
-        "cudf-debug:10.0": { "cudaVersionFull": "10.0.130",
+                            "rapidsVersion": "0.11",
+                            "cumlPrimsVersion": "0.11.*" },
+        "rapids-0.11:10.0": { "cudaVersionFull": "10.0.130",
                              "base": "ubuntu:16.04",
                              "needsContext": True,
-                             "rapidsVersion": rapidsVersion }
+                             "rapidsVersion": "0.11",
+                             "cumlPrimsVersion": "0.11.*" },
+        "rapids-0.12:10.0": { "cudaVersionFull": "10.0.130",
+                             "base": "ubuntu:16.04",
+                             "needsContext": True,
+                             "rapidsVersion": "0.12",
+                             "cumlPrimsVersion": "0.12.0a200121" }
     }
