@@ -10,7 +10,7 @@ def emit(writer, **kwargs):
     # everything is already installed, just add runas and ssh
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
-    modules.legate_dask.emit(writer)
+    modules.legate_dask.emit(writer, **kwargs)
 
 def images():
     return {
@@ -19,6 +19,15 @@ def images():
             "rapidsVersion": "0.11",
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
+            "legate_branch": "dask_interop",
+        },
+        "legate-dask-debug:10.0": {
+            "base": "rapidsai/rapidsai-dev:0.11-cuda10.0-devel-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.11",
+            "cudaVersionFull": "10.0.130",
+            "needsContext": True,
+            "debug": True,
+            "legate_branch": "dask_interop",
         }
     }
     
