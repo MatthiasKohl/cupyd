@@ -48,8 +48,10 @@ def emit(writer, **kwargs):
         python setup.py build_ext --inplace && \\
         python setup.py install
     """)
+    # bison, flex, ssl are dependencies of Thrift, which is a dependency of arrow
     writer.packages(['libboost-all-dev', 'libssl-dev', 'bison', 'flex'])
     # the linking is a hack to make FindCUDA (deprecated in Cmake) work
+    # it seems like arrow is in cudf cmake anyway, but we have to manually install it (for whatever reason)
     writer.emit("""
     RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so
     RUN ldconfig
@@ -71,8 +73,21 @@ def emit(writer, **kwargs):
         make && \\
         make install
     RUN git clone --recurse-submodules -b branch-0.12 https://github.com/rapidsai/cudf.git /opt/cudf && \\
-        cd /opt/cudf && \\
-        INSTALL_PREFIX=/usr/local ./build.sh
+        cd /opt/cudf/cpp && \\
+        mkdir build && \\
+        cd build && \\
+        cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CXX11_ABI=ON -DGPU_ARCHS= -DCMAKE_BUILD_TYPE=Release .. && \\
+        make -j8 install_nvstrings && \\
+        cd /opt/cudf/python/nvstrings && \\
+        python setup.py build_ext && \\
+        python setup.py install --single-version-externally-managed --record=record.txt && \\
+        cd /opt/cudf/cpp/build && \\
+        make -j8 install_cudf && \\
+        cd /opt/cudf/python/cudf && \\
+        python setup.py build_ext --inplace && \\
+        python setup.py install --single-version-externally-managed --record=record.txt && \\
+        cd /opt/cudf/python/dask_cudf && \\
+        python setup.py install --single-version-externally-managed --record=record.txt
     """)
     # # MNMG will be impossible:
     # # hopefully, libcumlprims and nccl are not required with --singlegpu
