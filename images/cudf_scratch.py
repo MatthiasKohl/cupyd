@@ -41,7 +41,7 @@ def emit(writer, **kwargs):
         mkdir build && \\
         cd build && \\
         cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && \\
-        make -j && \\
+        make -j8 && \\
         make install && \\
         cd ../python && \\
         sed -i 's/f\"Invalid CUDA_HOME: \"//g' setup.py && \\
@@ -76,7 +76,7 @@ def emit(writer, **kwargs):
         cd /opt/cudf/cpp && \\
         mkdir build && \\
         cd build && \\
-        cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CXX11_ABI=ON -DGPU_ARCHS= -DCMAKE_BUILD_TYPE=Release .. && \\
+        cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CXX11_ABI=ON -DGPU_ARCHS= .. && \\
         make -j8 install_nvstrings && \\
         cd /opt/cudf/python/nvstrings && \\
         python setup.py build_ext && \\
@@ -89,22 +89,21 @@ def emit(writer, **kwargs):
         cd /opt/cudf/python/dask_cudf && \\
         python setup.py install --single-version-externally-managed --record=record.txt
     """)
-    # # MNMG will be impossible:
-    # # hopefully, libcumlprims and nccl are not required with --singlegpu
-    # writer.emit("""
-    # RUN pip install cupy-cuda100 scikit-learn umap-learn dask-ml statsmodels
-    # RUN git clone  --recurse-submodules -b branch-0.12 https://github.com/rapidsai/cuml.git /opt/cuml && \\
-    #     cd /opt/cuml/cpp && \\
-    #     mkdir build && \\
-    #     cd build && \\
-    #     cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_CUML_STD_COMMS=OFF -DWITH_UCX=OFF -DBUILD_CUML_MPI_COMMS=OFF -DBUILD_CUML_MG_TESTS=OFF && \\
-    #     make -j && \\
-    #     make install && \\
-    #     cd /opt/cuml/python && \\
-    #     python setup.py build_ext --inplace --singlegpu && \\
-    #     python setup.py install
-    # """)
-
+    # MNMG will be impossible:
+    # hopefully, libcumlprims and nccl are not required with --singlegpu
+    writer.emit("""
+    RUN pip install cupy-cuda100 scikit-learn umap-learn dask-ml statsmodels
+    RUN git clone  --recurse-submodules -b branch-0.12 https://github.com/rapidsai/cuml.git /opt/cuml && \\
+        cd /opt/cuml/cpp && \\
+        mkdir build && \\
+        cd build && \\
+        cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_CUML_STD_COMMS=OFF -DWITH_UCX=OFF -DBUILD_CUML_MPI_COMMS=OFF -DBUILD_CUML_MG_TESTS=OFF && \\
+        make -j8 && \\
+        make install && \\
+        cd /opt/cuml/python && \\
+        python setup.py build_ext --inplace --singlegpu && \\
+        python setup.py install
+    """)
 
 def images():
     return {
