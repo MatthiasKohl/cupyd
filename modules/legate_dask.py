@@ -19,7 +19,7 @@ def emit(writer, **kwargs):
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-gfortran /usr/local/cuda/bin/gfortran
         RUN source activate rapids && \\
             echo "Change this message for re-build!" && \\
-            git clone -b $legate_branch https://gitlab-master.nvidia.com/mkohl/Legate.git \\
+            git clone -b $legate_branch https://gitlab-master.nvidia.com/mjoux/Legate.git \\
             /opt/legate && \\
             cd /opt/legate && \\
             python ./install.py $debug \\
