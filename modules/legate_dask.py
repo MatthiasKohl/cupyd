@@ -14,6 +14,9 @@ def emit(writer, **kwargs):
         channels=['anaconda', 'conda-forge'],
         installOpts='-n rapids')
     writer.emit("""
+        RUN git clone --branch v1.0.1 https://github.com/NVIDIA/cutlass.git /opt/cutlass
+    """)
+    writer.emit("""
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-gcc /usr/local/cuda/bin/gcc
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-g++ /usr/local/cuda/bin/g++
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-gfortran /usr/local/cuda/bin/gfortran
@@ -26,6 +29,7 @@ def emit(writer, **kwargs):
             --cuda --with-cuda /usr/local/cuda --arch volta \\
             --with-openblas /opt/conda/envs/rapids/
         WORKDIR /home""",
+        # TODO arch!!
         user=os.getuid(),
         debug='--debug' if is_debug else '',
         legate_branch=legate_branch)
