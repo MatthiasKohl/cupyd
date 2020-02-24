@@ -20,6 +20,8 @@ def emit(writer, **kwargs):
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-gcc /usr/local/cuda/bin/gcc
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-g++ /usr/local/cuda/bin/g++
         RUN ln -s /opt/conda/envs/rapids/bin/x86_64-conda_cos6-linux-gnu-gfortran /usr/local/cuda/bin/gfortran
+    """)
+    writer.emit("""
         RUN source activate rapids && \\
             echo "Change this message for re-build!" && \\
             git clone -b $legate_branch https://gitlab-master.nvidia.com/mjoux/Legate.git \\
