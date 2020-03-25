@@ -82,45 +82,45 @@ def parseargs():
     desc = "Wrapper to work with gpu containers"
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("-build", default=False, action="store_true",
-        help="Build the docker image locally first")
+                        help="Build the docker image locally first")
     parser.add_argument("-copy", default=None, type=str,
-        help="Copy the temporary build dir into this dir")
+                        help="Copy the temporary build dir into this dir")
     parser.add_argument("-dns", default=[], action="append", type=str,
-        help="Pass DNS servers to be used inside container")
+                        help="Pass DNS servers to be used inside container")
     parser.add_argument("-img", type=str, default=None,
-        help="Image to build/push/pull/launch")
+                        help="Image to build/push/pull/launch")
     parser.add_argument("-ipc", default=None, type=str,
-        help="how to use shared memory between processes.")
+                        help="how to use shared memory between processes.")
     parser.add_argument("-list", action="store_true", default=False,
-        help="List all images supported")
+                        help="List all images supported")
     parser.add_argument("-onlycopy", action="store_true", default=False,
-        help="Only copy the Dockerfile folder")
+                        help="Only copy the Dockerfile folder")
     parser.add_argument("-printComments", action="store_true", default=False,
-        help="Print the origin of docker commands in the generated Dockerfile")
+                        help="Print the origin of docker commands in the generated Dockerfile")
     parser.add_argument("-privileged", action="store_true", default=False,
-        help="Pass a '--privileged' option to docker run command.")
+                        help="Pass a '--privileged' option to docker run command.")
     parser.add_argument("-pull", action="store_true", default=False,
-        help="Pull the image first from a remote registry.")
+                        help="Pull the image first from a remote registry.")
     parser.add_argument("-push", action="store_true", default=False,
-        help="Push the local image to a remote registry.")
+                        help="Push the local image to a remote registry.")
     parser.add_argument("-repo", default="nvcr.io/nvidian_general/teju85-",
-        type=str, help="Remote registry prefix to pull/push this image from/to")
+                        type=str, help="Remote registry prefix to pull/push this image from/to")
     parser.add_argument("-run", default=False, action="store_true",
-        help="Run the image to launch a container")
+                        help="Run the image to launch a container")
     parser.add_argument("-runas", choices=["user", "root", "uid"],
-        default="root", type=str,
-        help="Run as specified. Default is root. Options: "
-        " user [run as current user by switching user inside the container]"
-        " root [run as root, without any of these switching abilities]"
-        " uid  ['-u' option to docker. To run on non-privileged containers]")
+                        default="root", type=str,
+                        help="Run as specified. Default is root. Options: "
+                        " user [run as current user by switching user inside the container]"
+                        " root [run as root, without any of these switching abilities]"
+                        " uid  ['-u' option to docker. To run on non-privileged containers]")
     parser.add_argument("-security", type=str, default=None,
-        help="Same as --security-opt option of docker")
+                        help="Same as --security-opt option of docker")
     parser.add_argument("-nohostname", action="store_true", default=False,
                         help="Do not pass '-h' option to docker run")
     parser.add_argument("-v", default=[], action="append", type=str,
-        help="Volumes to mount. Same syntax as docker run")
+                        help="Volumes to mount. Same syntax as docker run")
     parser.add_argument("cmd", nargs=argparse.REMAINDER,
-        help="Command to run inside the container")
+                        help="Command to run inside the container")
     args = parser.parse_args()
     validateargs(args)
     return args
@@ -156,7 +156,8 @@ class Runner:
 
     def run(self):
         args = self.args
-        finalcmd = ["-it", "--rm", "--runtime", "nvidia"]
+        finalcmd = ["-it", "--rm", "--runtime",
+                    "nvidia", "--cap-add=SYS_PTRACE"]
         finalcmd += self.__getPort(args.img)
         finalcmd += self.__getVols(args)
         finalcmd += self.__getUser(args)

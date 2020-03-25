@@ -15,19 +15,18 @@ def emit(writer, **kwargs):
 def images():
     return {
         "legate-dask:10.0": {
-            "base": "rapidsai/rapidsai-dev:0.11-cuda10.0-devel-ubuntu16.04-py3.7",
-            "rapidsVersion": "0.11",
+            "base": "rapidsai/rapidsai-dev:0.12-cuda10.0-devel-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.12",
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
             "legate_branch": "dask_interop",
         },
         "legate-dask-debug:10.0": {
-            "base": "rapidsai/rapidsai-dev:0.11-cuda10.0-devel-ubuntu16.04-py3.7",
-            "rapidsVersion": "0.11",
+            "base": "rapidsai/rapidsai-dev:0.12-cuda10.0-devel-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.12",
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
             "debug": True,
             "legate_branch": "dask_interop",
         }
     }
-    
