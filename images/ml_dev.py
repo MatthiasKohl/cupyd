@@ -5,6 +5,7 @@ import modules.conda_ml_env
 import modules.runas
 import modules.ssh
 import modules.openmpi
+from itertools import product
 
 
 def emit(writer, **kwargs):
@@ -19,23 +20,16 @@ def emit(writer, **kwargs):
     modules.cuml_dev.emit(writer, **kwargs)
 
 
-rapidsVersion = "0.11"
+def get_params(rapidsVersion, cudaVersionFull):
+    return {"cudaVersionFull": cudaVersionFull,
+            "base": "ubuntu:16.04",
+            "needsContext": True,
+            "rapidsVersion": rapidsVersion}
+
+
 def images():
-    return {
-        "ml-dev:9.2": { "cudaVersionFull": "9.2.88",
-                        "base": "ubuntu:16.04",
-                        "needsContext": True,
-                        "rapidsVersion": rapidsVersion },
-        "ml-dev:10.0": { "cudaVersionFull": "10.0.130",
-                         "base": "ubuntu:16.04",
-                         "needsContext": True,
-                         "rapidsVersion": rapidsVersion },
-        "ml-dev:10.1": { "cudaVersionFull": "10.1.105",
-                         "base": "ubuntu:16.04",
-                         "needsContext": True,
-                         "rapidsVersion": rapidsVersion },
-        "ml-dev:10.1-1804": { "cudaVersionFull": "10.1.105",
-                              "base": "ubuntu:18.04",
-                              "needsContext": True,
-                              "rapidsVersion": rapidsVersion }
-    }
+    return {'ml-dev-{}:{}'.format(rapidsVersion, '.'.join(cudaFull.split('.')[:2])): get_params(rapidsVersion, cudaFull)
+            for rapidsVersion, cudaFull in product(
+                ['0.12', '0.13', '0.14'],
+                ['10.0.130', '10.1.105', '10.2.89'])
+            }

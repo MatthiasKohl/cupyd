@@ -1,26 +1,58 @@
 import modules.cuda
+import os
+import shutil
+import subprocess
+
+
+# very naive yaml parser because we cannot install any python packages directly on machines
+def load_env(filename):
+    with open(filename) as f:
+        lines = [x.rstrip() for x in f.readlines()]
+    i_channels = next(i for i, line in enumerate(lines) if line == 'channels:')
+    channels = []
+    while True:
+        i_channels += 1
+        if i_channels >= len(lines):
+            break
+        line = lines[i_channels]
+        if not line.startswith('- '):
+            break
+        channels.append('"{}"'.format(line[2:]))
+    i_deps = next(i for i, line in enumerate(lines) if line == 'dependencies:')
+    deps, pip_packages = [], []
+    while True:
+        i_deps += 1
+        if i_deps >= len(lines):
+            break
+        line = lines[i_deps]
+        line_s = line.strip()
+        if not line_s.startswith('- '):
+            break
+        if 'pip:' in line:
+            continue
+        if line_s != line:
+            pip_packages.append(line_s[2:])
+            continue
+        deps.append('"{}"'.format(line[2:]))
+    return channels, deps, pip_packages
+
 
 def emit(writer, **kwargs):
     if "rapidsVersion" not in kwargs:
         raise Exception("'rapidsVersion' is mandatory!")
     rapidsVersion = kwargs["rapidsVersion"]
-    numbaVersion, ucxVersion = "0.45*", "$rapidsVersion.*"
-    if rapidsVersion >= "0.12":
-        numbaVersion, ucxVersion = "0.46*", "0.11"
-    writer.packages(["doxygen", "graphviz", "gzip", "libopenblas-dev",
-                     "libpthread-stubs0-dev", "tar", "unzip", "zlib1g-dev"])
-    writer.condaPackages(["boost", "cmake=3.14.5", "cudf=$rapidsVersion.*",
-                          "cython", "dask", "dask-cuda=$rapidsVersion.*",
-                          "dask-cudf=$rapidsVersion.*", "dask-ml",
-                          "distributed", "flake8", "libclang=8.0.0",
-                          "libcumlprims=$rapidsVersion.*", "nccl>=2.4",
-                          "numba=$numbaVersion", "protobuf", "pytest",
-                          "rmm=$rapidsVersion.*", "scikit-learn", "scipy",
-                          "statsmodels", "umap-learn",
-                          "ucx-proc=*=gpu", "ucx", "ucx-py=$ucxVersion",],
-                         channels=["rapidsai", "nvidia", "rapidsai-nightly",
-                                   "conda-forge", "anaconda", "defaults"],
-                         rapidsVersion=rapidsVersion,
-                         numbaVersion=numbaVersion,
-                         ucxVersion=ucxVersion)
+    cudaVersion = '.'.join(kwargs["cudaVersionFull"].split('.')[:2])
+    cuml_dir = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), '..', '..', 'cuml')
+    if os.path.exists(cuml_dir):
+        subprocess.check_call(
+            ['git', 'checkout', 'branch-{}'.format(rapidsVersion)], cwd=cuml_dir)
+    else:
+        subprocess.check_call(
+            ['git', 'clone', '-b', 'branch-{}'.format(rapidsVersion), 'https://github.com/MatthiasKohl/cuml', cuml_dir])
+    channels, deps, pip_packages = load_env(
+        os.path.join(cuml_dir, 'conda', 'environments', 'cuml_dev_cuda{}.yml'.format(cudaVersion)))
+    writer.condaPackages(deps, channels=channels)
     writer.emit("""ENV CONDA_PREFIX=/opt/conda""")
+    if pip_packages:
+        writer.emit("""RUN pip install {}""".format(' '.join(pip_packages)))
