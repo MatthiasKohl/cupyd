@@ -25,6 +25,8 @@ if [ "$RUNAS_UID" != "" ] && [ "$RUNAS_USER" != "" ]; then
         echo "Pre-switch cmd: $RUNAS_PRE_SWITCH_CMD"
         $RUNAS_PRE_SWITCH_CMD
     fi
+    echo "Making /opt available to user"
+    chown -R $USER:$USER /opt
     exec /opt/runas/exec-as `id -u $USER` `id -g $USER` `pwd` $*
 # this is the case for '-runas root' inside launch script
 elif [ "$RUNAS_UID" = "" ] && [ "$RUNAS_USER" = "" ]; then
