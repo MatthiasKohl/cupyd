@@ -10,6 +10,11 @@ def emit(writer, **kwargs):
     is_debug = kwargs.get('debug', False)
     legate_branch = kwargs.get('legate_branch', 'dask')
     print('Using debug build: ', is_debug, ' legate branch: ', legate_branch)
+    writer.emit("""
+        RUN mkdir -p "$${CONDA_PREFIX}/etc/conda/activate.d" && mkdir -p "$${CONDA_PREFIX}/etc/conda/deactivate.d/"
+        COPY contexts/conda/activate_dev_env.sh "$${CONDA_PREFIX}/etc/conda/activate.d/dev_env.sh"
+        COPY contexts/conda/deactivate_dev_env.sh "$${CONDA_PREFIX}/etc/conda/deactivate.d/dev_env.sh"
+    """)
     writer.packages(['software-properties-common', 'zlib1g-dev', 'tmux'])
     writer.emit("""
         RUN add-apt-repository ppa:ubuntu-toolchain-r/test
@@ -35,7 +40,7 @@ def emit(writer, **kwargs):
     #        cd /opt/legate && \\
     #        python ./install.py $debug \\
     #        --cuda --with-cuda /usr/local/cuda --arch volta \\
-    #        --with-openblas /opt/conda/envs/rapids/
+    #        --with-openblas $CONDA_PREFIX
     #    WORKDIR /home""",
     #             # TODO arch!!
     #             user=os.getuid(),
