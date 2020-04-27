@@ -156,8 +156,10 @@ class Runner:
 
     def run(self):
         args = self.args
-        finalcmd = ["-it", "--rm", "--runtime",
-                    "nvidia", "--cap-add=SYS_PTRACE"]
+        finalcmd = ["-it", "--rm", "--runtime", "nvidia",
+                    # for gdb to work in all cases
+                    "--cap-add=SYS_PTRACE",
+                    "--security-opt seccomp=unconfined"]
         finalcmd += self.__getPort(args.img)
         finalcmd += self.__getVols(args)
         finalcmd += self.__getUser(args)

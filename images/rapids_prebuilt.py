@@ -18,5 +18,11 @@ def images():
             "rapidsVersion": "0.11",
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
+        },
+        "rapids-0.14:10.2": {
+            "base": "rapidsai/rapidsai-nightly:cuda10.2-runtime-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.14",
+            "cudaVersionFull": "10.2.89",
+            "needsContext": True,
         }
     }
