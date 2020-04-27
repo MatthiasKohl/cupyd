@@ -43,13 +43,16 @@ def emit(writer, **kwargs):
         raise Exception("'rapidsVersion' is mandatory!")
     rapidsVersion = kwargs["rapidsVersion"]
     cudaVersion = '.'.join(kwargs["cudaVersionFull"].split('.')[:2])
-    with tempfile.TemporaryDirectory() as cuml_dir:
-        print('Cloning rapidsai/cuml to', cuml_dir, '. This may take a while...')
+    cuml_dir = tempfile.mkdtemp()
+    try:
+        print('Cloning rapidsai/cuml to {} and parsing conda env. This may take a while...'.format(cuml_dir))
         subprocess.check_call(
             ['git', 'clone', '-b', 'branch-{}'.format(rapidsVersion), 'https://github.com/rapidsai/cuml.git', cuml_dir])
-        print('Cloning rapidsai/cuml done.')
-    channels, deps, pip_packages = load_env(
-        os.path.join(cuml_dir, 'conda', 'environments', 'cuml_dev_cuda{}.yml'.format(cudaVersion)))
+        channels, deps, pip_packages = load_env(
+            os.path.join(cuml_dir, 'conda', 'environments', 'cuml_dev_cuda{}.yml'.format(cudaVersion)))
+        print('Cloning rapidsai/cuml and parsing done.')
+    finally:
+        shutil.rmtree(cuml_dir)
     writer.condaPackages(deps, channels=channels)
     writer.emit("""ENV CONDA_PREFIX=/opt/conda""")
     if pip_packages:
