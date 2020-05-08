@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import modules.cuda_dev
+import modules.conda
 import modules.cuml_dev
-import modules.conda_ml_env
 import modules.runas
 import modules.ssh
 import modules.openmpi
@@ -15,8 +15,9 @@ def emit(writer, **kwargs):
     modules.cuda_dev.emit(writer, cudaVersionFull, kwargs["base"])
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
-    modules.conda_ml_env.emit(writer)
-    modules.openmpi.emit(writer, devBuild=False, ompiVersion="4.0.2")
+    if kwargs.get("openmpi", False):
+        modules.openmpi.emit(writer, devBuild=False, ompiVersion="4.0.2")
+    modules.conda.emit(writer)
     modules.cuml_dev.emit(writer, **kwargs)
     writer.packages(['software-properties-common'])
     writer.emit("""
@@ -29,11 +30,12 @@ def emit(writer, **kwargs):
         ENV CXX g++-7
     """)
 
-def get_params(rapidsVersion, cudaVersionFull):
+def get_params(rapidsVersion, cudaVersionFull, use_mpi=False):
     return {"cudaVersionFull": cudaVersionFull,
             "base": "ubuntu:16.04",
             "needsContext": True,
-            "rapidsVersion": rapidsVersion}
+            "rapidsVersion": rapidsVersion,
+            "openmpi": use_mpi}
 
 
 def images():

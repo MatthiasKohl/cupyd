@@ -19,7 +19,12 @@ def images():
             "rapidsVersion": "0.12",
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
-            "legate_branch": "dask_interop",
+        },
+        "legate-dask-0.14:10.0": {
+            "base": "rapidsai/rapidsai-dev-nightly:0.14-cuda10.0-devel-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.14",
+            "cudaVersionFull": "10.0.130",
+            "needsContext": True,
         },
         "legate-dask-debug:10.0": {
             "base": "rapidsai/rapidsai-dev:0.12-cuda10.0-devel-ubuntu16.04-py3.7",
@@ -27,6 +32,5 @@ def images():
             "cudaVersionFull": "10.0.130",
             "needsContext": True,
             "debug": True,
-            "legate_branch": "dask_interop",
         }
     }

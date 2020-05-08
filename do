@@ -119,6 +119,9 @@ def parseargs():
                         help="Do not pass '-h' option to docker run")
     parser.add_argument("-v", default=[], action="append", type=str,
                         help="Volumes to mount. Same syntax as docker run")
+    parser.add_argument("-runas_pre_switch_cmd",
+                        help="if run as user, a command to run before switching to user",
+                        default="")
     parser.add_argument("cmd", nargs=argparse.REMAINDER,
                         help="Command to run inside the container")
     args = parser.parse_args()
@@ -274,14 +277,19 @@ class Runner:
     def __getUser(self, args):
         out = []
         bindir = os.path.abspath(os.path.dirname(__file__))
+        run_as_user = False
         if args.runas == "user":
             out.append("-e RUNAS_UID=%d" % os.getuid())
             out.append("-e RUNAS_USER=%s" % getpass.getuser())
+            run_as_user = True
         elif args.runas == "uid":
             uid = os.getuid()
             gid = os.getgid()
             out.append("-u %d:%d" % (uid, gid))
             out.append("-e RUNAS_USER=%s" % getpass.getuser())
+            run_as_user = True
+        if run_as_user and args.runas_pre_switch_cmd:
+            out.append("-e RUNAS_PRE_SWITCH_CMD=%s" % args.runas_pre_switch_cmd)
         return out
 
 

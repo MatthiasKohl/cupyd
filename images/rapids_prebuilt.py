@@ -8,7 +8,7 @@ def emit(writer, **kwargs):
         raise Exception("'rapidsVersion' is mandatory!")
     # everything is already installed, just add runas and ssh
     modules.runas.emit(writer)
-    modules.ssh.emit(writer)
+    # modules.ssh.emit(writer)
 
 
 def images():
@@ -21,6 +21,12 @@ def images():
         },
         "rapids-0.14:10.2": {
             "base": "rapidsai/rapidsai-nightly:cuda10.2-runtime-ubuntu16.04-py3.7",
+            "rapidsVersion": "0.14",
+            "cudaVersionFull": "10.2.89",
+            "needsContext": True,
+        },
+        "rapids-dev-0.14:10.1": {
+            "base": "rapidsai/rapidsai-dev-nightly:0.14-cuda10.2-devel-ubuntu16.04-py3.7",
             "rapidsVersion": "0.14",
             "cudaVersionFull": "10.2.89",
             "needsContext": True,
