@@ -11,6 +11,7 @@ from itertools import product
 def emit(writer, **kwargs):
     if "cudaVersionFull" not in kwargs:
         raise Exception("'cudaVersionFull' is mandatory!")
+    assert kwargs.get("needsContext", False), "this image needs context!"
     cudaVersionFull = kwargs["cudaVersionFull"]
     modules.cuda_dev.emit(writer, cudaVersionFull, kwargs["base"])
     modules.runas.emit(writer)
@@ -28,6 +29,10 @@ def emit(writer, **kwargs):
         RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 --slave /usr/bin/g++ g++ /usr/bin/g++-7
         ENV CC gcc-7
         ENV CXX g++-7
+    """)
+    writer.emit("""
+        ENV LD_LIBRARY_PATH="$${CONDA_PREFIX}/lib:$${LD_LIBRARY_PATH}"
+        ENV LIBRARY_PATH="$${CONDA_PREFIX}/lib:$${LIBRARY_PATH}"
     """)
 
 def get_params(rapidsVersion, cudaVersionFull, use_mpi=False):
