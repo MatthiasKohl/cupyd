@@ -1,6 +1,8 @@
 import modules.runas
 import modules.ssh
 import modules.legate_dask
+import modules.openmpi
+import modules.gasnet
 
 def emit(writer, **kwargs):
     if "cudaVersionFull" not in kwargs:
@@ -11,6 +13,14 @@ def emit(writer, **kwargs):
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
     modules.legate_dask.emit(writer, **kwargs)
+    modules.openmpi.emit(writer, devBuild=False, ompiVersion="4.0.2")
+    modules.gasnet.emit(writer, conduit="mpi")
+    writer.emit("""
+        ENV OPT_DIR=/opt
+        ENV LEGATE_DIR=/home/scratch.mjoux_gpu/dev/legate.core/install
+        ENV LIBRARY_PATH="$${LEGATE_DIR}/lib:$${LIBRARY_PATH}"
+        ENV LD_LIBRARY_PATH="$${LEGATE_DIR}/lib:$${LD_LIBRARY_PATH}"
+    """)
 
 def images():
     return {
