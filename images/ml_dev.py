@@ -46,6 +46,6 @@ def get_params(rapidsVersion, cudaVersionFull, use_mpi=False):
 def images():
     return {'ml-dev-{}:{}'.format(rapidsVersion, '.'.join(cudaFull.split('.')[:2])): get_params(rapidsVersion, cudaFull)
             for rapidsVersion, cudaFull in product(
-                ['0.12', '0.13', '0.14'],
+                ['0.12', '0.13', '0.14', '0.15'],
                 ['10.0.130', '10.1.105', '10.2.89'])
             }

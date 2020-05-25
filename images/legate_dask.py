@@ -3,6 +3,7 @@ import modules.ssh
 import modules.legate_dask
 import modules.openmpi
 import modules.gasnet
+import modules.nsys
 
 def emit(writer, **kwargs):
     if "cudaVersionFull" not in kwargs:
@@ -15,6 +16,7 @@ def emit(writer, **kwargs):
     modules.legate_dask.emit(writer, **kwargs)
     modules.openmpi.emit(writer, devBuild=False, ompiVersion="4.0.2")
     modules.gasnet.emit(writer, conduit="mpi")
+    modules.nsys.emit(writer, version="2020.2.1")
     writer.emit("""
         ENV OPT_DIR=/opt
         ENV LEGATE_DIR=/home/scratch.mjoux_gpu/dev/legate.core/install
