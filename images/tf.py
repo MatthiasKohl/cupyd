@@ -12,7 +12,7 @@ def emit(writer, **kwargs):
     if kwargs['TFMajorVersion'] == 1:
         tfp_install = 'tensorflow-probability==0.7'
     if kwargs['containerSource'] == 'tensorflow':
-        tfp_install = 'tensorflow-probability==0.10.0-rc1'
+        tfp_install = 'tensorflow-probability==0.10.0'
     writer.emit("""
         RUN pip install $tfp_install fs pendulum Pillow
     """, tfp_install=tfp_install)
@@ -36,5 +36,18 @@ def images():
             "TFMajorVersion": 2,
             "containerSource": "tensorflow",
             "needsContext": True,
+        },
+        "tf1:19.09": {
+            "base": "nvcr.io/nvidia/tensorflow:19.09-py3",
+            "TFMajorVersion": 1,
+            "containerSource": "NGC",
+            "needsContext": True,
+        },
+        "tf-dev:20.03": {
+            "base": "nvcr.io/nvidia/tensorflow:20.03-tf1-py3",
+            "TFMajorVersion": 1,
+            "containerSource": "NGC",
+            "needsContext": True,
+            "dev": True,
         }
     }
