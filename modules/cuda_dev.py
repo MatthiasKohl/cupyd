@@ -13,6 +13,8 @@ def emit(writer, cudaVersionFull, baseImage="ubuntu:16.04"):
     short = float(versionShort)
     if short < 10.1:
         cublas = "cuda-cublas-dev-$pkgVersion"
+    elif short == 10.2:
+        cublas = "libcublas-dev=%s.2.%s-1" % (versionShort, subminor)
     else:
         cublas = "libcublas-dev=%s.0.%s-1" % (versionShort, subminor)
     pkgs = ["cuda-command-line-tools-$pkgVersion",

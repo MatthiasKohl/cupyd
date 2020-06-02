@@ -1,4 +1,5 @@
 import os
+import modules.gcc7
 
 
 def emit(writer, **kwargs):
@@ -15,16 +16,8 @@ def emit(writer, **kwargs):
         COPY contexts/conda/activate_dev_env.sh "/opt/conda/envs/rapids/etc/conda/activate.d/dev_env.sh"
         COPY contexts/conda/deactivate_dev_env.sh "/opt/conda/envs/rapids/etc/conda/deactivate.d/dev_env.sh"
     """)
-    writer.packages(['software-properties-common', 'zlib1g-dev', 'tmux'])
-    writer.emit("""
-        RUN add-apt-repository ppa:ubuntu-toolchain-r/test
-    """)
-    writer.packages(['gcc-7', 'g++-7'])
-    writer.emit("""
-        RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 --slave /usr/bin/g++ g++ /usr/bin/g++-7
-        ENV CC gcc-7
-        ENV CXX g++-7
-    """)
+    writer.packages(['zlib1g-dev', 'tmux'])
+    modules.gcc7.emit(writer)
     writer.condaPackages(['python-graphviz'],
                          channels=['conda-forge'], installOpts='-n rapids')
     writer.emit("""

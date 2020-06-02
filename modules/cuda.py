@@ -53,6 +53,8 @@ def emit(writer, cudaVersionFull, baseImage):
     short = float(versionShort)
     if short < 10.1:
         cublas = "cuda-cublas-$pkgVersion"
+    elif short == 10.2:
+        cublas = "libcublas%s=%s.2.%s-1" % (major, versionShort, subminor)
     else:
         cublas = "libcublas%s=%s.0.%s-1" % (major, versionShort, subminor)
     pkgs = [cublas,

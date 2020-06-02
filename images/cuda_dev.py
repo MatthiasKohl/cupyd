@@ -4,6 +4,7 @@ import modules.runas
 import modules.ssh
 import modules.build_essential
 import modules.cmake
+import modules.gcc7
 
 
 def emit(writer, **kwargs):
@@ -19,6 +20,7 @@ def emit(writer, **kwargs):
     modules.build_essential.emit(writer)
     modules.cmake.emit(writer, cmakeVersionFull)
     writer.packages(["ca-certificates", "doxygen"])
+    modules.gcc7.emit(writer)
 
 
 def images():
@@ -34,5 +36,9 @@ def images():
         "cuda-dev:10.1-1804": { "cudaVersionFull": "10.1.105",
                                 "base": "ubuntu:18.04",
                                 "needsContext": True,
-                                "cmakeVersionFull": "3.14.7" }
+                                "cmakeVersionFull": "3.14.7" },
+        "cuda-dev:10.2": { "cudaVersionFull": "10.2.89",
+                           "base": "ubuntu:18.04",
+                           "needsContext": True,
+                           "cmakeVersionFull": "3.14.7" },
     }
