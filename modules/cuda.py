@@ -46,48 +46,64 @@ def shortVersion(cudaVersionFull):
     return major, minor, subminor, versionShort, pkgVersion
 
 
-def emit(writer, cudaVersionFull, baseImage):
+def emit(writer, cudaVersionFull, cudaVersionExt, baseImage):
     major, minor, subminor, versionShort, pkgVersion = shortVersion(cudaVersionFull)
+    extVersion = "%s-%s=%s-1" % (major, minor, cudaVersionExt)
     emitHeader(writer, baseImage)
     writer.emit("ENV CUDA_VERSION $cudaVersionFull", cudaVersionFull=cudaVersionFull)
     short = float(versionShort)
     if short < 10.1:
-        cublas = "cuda-cublas-$pkgVersion"
-    elif short == 10.2:
-        cublas = "libcublas%s=%s.2.%s-1" % (major, versionShort, subminor)
+        pkgs = ["cuda-cublas-$pkgVersion"]
+    elif short < 11.0:
+        pkgs = ["libcublas10=$cudaVersionExt-1"]
     else:
-        cublas = "libcublas%s=%s.0.%s-1" % (major, versionShort, subminor)
-    pkgs = [cublas,
-            "cuda-cudart-$pkgVersion",
+        pkgs = ["libcublas-$extVersion"]
+    if short < 11.0:
+        pkgs.extend([
             "cuda-cufft-$pkgVersion",
             "cuda-curand-$pkgVersion",
             "cuda-cusolver-$pkgVersion",
             "cuda-cusparse-$pkgVersion",
             "cuda-npp-$pkgVersion",
             "cuda-nvgraph-$pkgVersion",
-            "cuda-nvrtc-$pkgVersion"]
-    if short >= 10.1:
+        ])
+    else:
+        pkgs.extend([
+            "libcufft-$major-$minor",
+            "libcurand-$major-$minor",
+            "libcusolver-$major-$minor",
+            "libcusparse-$extVersion",
+            "libnpp-$extVersion",
+        ])
+    if short >= 10.1 and short < 11.0:
         pkgs.append("cuda-cupti-$pkgVersion")
         pkgs.append("cuda-compiler-$pkgVersion")
         pkgs.append("cuda-cudart-dev-$pkgVersion")
         pkgs.append("cuda-nvcc-$pkgVersion")
-    writer.packages(pkgs, pkgVersion=pkgVersion)
+    elif short >= 11.0:
+        pkgs.append("cuda-cupti-$major-$minor")
+        pkgs.append("cuda-compiler-$major-$minor")
+        pkgs.append("cuda-cudart-dev-$major-$minor")
+        pkgs.append("cuda-nvcc-$major-$minor")
+    writer.packages(
+        pkgs, pkgVersion=pkgVersion, extVersion=extVersion,
+        major=major, minor=minor, cudaVersionExt=cudaVersionExt)
     writer.emit("RUN ln -s cuda-$versionShort /usr/local/cuda""", versionShort=versionShort)
     writer.emit("""RUN echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/cuda.conf && \\
-    echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \\
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf && \\
-    ldconfig
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:$${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:$${LD_LIBRARY_PATH}
-ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:$${LIBRARY_PATH}
-ENV CUDA_VERSION_SHORT $versionShort
+        echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \\
+        echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf && \\
+        ldconfig
+        ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:$${PATH}
+        ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:$${LD_LIBRARY_PATH}
+        ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:$${LIBRARY_PATH}
+        ENV CUDA_VERSION_SHORT $versionShort
 
-LABEL com.nvidia.volumes.needed="nvidia_driver"
-LABEL com.nvidia.cuda.version="$cudaVersionFull"
+        LABEL com.nvidia.volumes.needed="nvidia_driver"
+        LABEL com.nvidia.cuda.version="$cudaVersionFull"
 
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=$versionShort"
-""",
+        ENV NVIDIA_VISIBLE_DEVICES all
+        ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+        ENV NVIDIA_REQUIRE_CUDA "cuda>=$versionShort"
+    """,
          cudaVersionFull=cudaVersionFull,
          versionShort=versionShort)
