@@ -5,7 +5,7 @@ import multiprocessing
 
 def shortVersion(cmakeVersionFull):
     # 3.13.4
-    regex = re.compile(r"^(\d+)[.](\d+)[.](\d+)$")
+    regex = re.compile(r"^(\d+)[.](\d+)[.](\d+)(-rc\d)?$")
     match = regex.search(cmakeVersionFull)
     if match is None:
         raise Exception("Bad cmake version '%s'!" % cmakeVersionFull)

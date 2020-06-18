@@ -2,7 +2,7 @@ import re
 import modules.cuda
 
 
-def emit(writer, cudaVersionFull, cudaVersionExt, baseImage="ubuntu:16.04"):
+def emit(writer, cudaVersionFull, cudaVersionExt, nsysVersion="2019.5.2", baseImage="ubuntu:16.04"):
     major, minor, subminor, versionShort, pkgVersion = modules.cuda.shortVersion(cudaVersionFull)
     extVersion = "%s-%s=%s-1" % (major, minor, cudaVersionExt)
     modules.cuda.emit(writer, cudaVersionFull, cudaVersionExt, baseImage)
@@ -56,7 +56,11 @@ def emit(writer, cudaVersionFull, cudaVersionExt, baseImage="ubuntu:16.04"):
         pkgs.append("cuda-cupti-dev-11-0")
         pkgs.append("cuda-nsight-compute-$major-$minor")
         pkgs.append("cuda-nsight-systems-$major-$minor")
+        if short == 10.2:
+            pkgs.append("nsight-systems-2019.5.2")
+        elif short == 11.0:
+            pkgs.append("nsight-systems-2020.2.5")
     writer.packages(
         pkgs, pkgVersion=pkgVersion, extVersion=extVersion, major=major,
-        minor=minor, cudaVersionExt=cudaVersionExt,
+        minor=minor, cudaVersionExt=cudaVersionExt, nsysVersion=nsysVersion,
         installOpts="--allow-downgrades")

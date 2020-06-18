@@ -17,7 +17,7 @@ def emit(writer, **kwargs):
         kwargs["cudaVersionExt"] = cudaVersionFull
     cmakeVersionFull = kwargs["cmakeVersionFull"]
     cudaVersionExt = kwargs["cudaVersionExt"]
-    modules.cuda_dev.emit(writer, cudaVersionFull, cudaVersionExt, kwargs["base"])
+    modules.cuda_dev.emit(writer, cudaVersionFull, cudaVersionExt, baseImage=kwargs["base"])
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
     modules.build_essential.emit(writer)
@@ -25,6 +25,7 @@ def emit(writer, **kwargs):
     writer.packages(["ca-certificates", "doxygen", "clang-format-8"])
     writer.emit("""
         RUN update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-8 100
+        ENV CUDA_ROOT /usr/local/cuda
     """)
     modules.gcc7.emit(writer)
 
@@ -47,10 +48,10 @@ def images():
                            "cudaVersionExt": "10.2.2.89",
                            "base": "ubuntu:18.04",
                            "needsContext": True,
-                           "cmakeVersionFull": "3.16.2" },
+                           "cmakeVersionFull": "3.18.0-rc2" },
         "cuda-dev:11.0": { "cudaVersionFull": "11.0.191",
                            "cudaVersionExt": "11.0.0.191",
                            "base": "ubuntu:18.04",
                            "needsContext": True,
-                           "cmakeVersionFull": "3.16.2" },
+                           "cmakeVersionFull": "3.18.0-rc2" },
     }
