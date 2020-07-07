@@ -53,13 +53,8 @@ def emit(writer, cudaVersionFull, cudaVersionExt, nsysVersion="2019.5.2", baseIm
             "libnpp-dev-$extVersion",
         ])
     if short >= 10.1:
-        pkgs.append("cuda-cupti-dev-11-0")
-        pkgs.append("cuda-nsight-compute-$major-$minor")
-        pkgs.append("cuda-nsight-systems-$major-$minor")
-        if short == 10.2:
-            pkgs.append("nsight-systems-2019.5.2")
-        elif short == 11.0:
-            pkgs.append("nsight-systems-2020.2.5")
+        pkgs.append("nsight-compute-$nsysVersion")
+        pkgs.append("nsight-systems-$nsysVersion")
     writer.packages(
         pkgs, pkgVersion=pkgVersion, extVersion=extVersion, major=major,
         minor=minor, cudaVersionExt=cudaVersionExt, nsysVersion=nsysVersion,
