@@ -122,6 +122,8 @@ def parseargs():
     parser.add_argument("-runas_pre_switch_cmd",
                         help="if run as user, a command to run before switching to user",
                         default="")
+    parser.add_argument("-clab", default=False, action="store_true",
+                        help="Whether running on computelab (only used in combination with run)")
     parser.add_argument("cmd", nargs=argparse.REMAINDER,
                         help="Command to run inside the container")
     args = parser.parse_args()
@@ -175,6 +177,8 @@ class Runner:
             finalcmd += ["--ipc=%s" % args.ipc]
         if args.security is not None:
             finalcmd += ["--security-opt=\"%s\"" % args.security]
+        if args.clab:
+            finalcmd += ["-e", "NVIDIA_VISIBLE_DEVICES=$NV_GPU"]
         finalcmd.append(args.img)
         finalcmd += self.__getCmd(args)
         dockercmd("run", *finalcmd)
