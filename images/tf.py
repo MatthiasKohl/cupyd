@@ -10,7 +10,7 @@ def emit(writer, **kwargs):
     assert 'containerSource' in kwargs
     tfp_install = 'tensorflow-probability'
     if kwargs['TFMajorVersion'] == 1:
-        tfp_install = 'tensorflow-probability==0.7'
+        tfp_install = 'tensorflow-probability==0.8'
     if kwargs['containerSource'] == 'tensorflow':
         tfp_install = 'tensorflow-probability==0.10.0'
     writer.emit("""
@@ -27,6 +27,12 @@ def images():
         },
         "tf1:20.03": {
             "base": "nvcr.io/nvidia/tensorflow:20.03-tf1-py3",
+            "TFMajorVersion": 1,
+            "containerSource": "NGC",
+            "needsContext": True,
+        },
+        "tf1:20.08": {
+            "base": "nvcr.io/nvidia/tensorflow:20.08-tf1-py3",
             "TFMajorVersion": 1,
             "containerSource": "NGC",
             "needsContext": True,
