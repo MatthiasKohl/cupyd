@@ -19,8 +19,12 @@ def emit(writer, **kwargs):
 def images():
     return {
         "cuda-dev-dt:10.2": {
-            "cudaVersionFull": "10.2.89",
             "base": "gitlab-master.nvidia.com:5005/dt-compute-public/container/cuda-released/10.2-ubuntu18.04-gnu8:20200602",
+            "needsContext": True,
+            "cmakeVersionFull": "3.18.0-rc2"
+        },
+        "cuda-dev-dt:11.0": {
+            "base": "gitlab-master.nvidia.com:5005/dt-compute-public/container/cuda-nightly/11.0-ubuntu18.04-gnu8:20200602",
             "needsContext": True,
             "cmakeVersionFull": "3.18.0-rc2"
         }
