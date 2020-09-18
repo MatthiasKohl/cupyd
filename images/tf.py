@@ -9,7 +9,9 @@ def emit(writer, **kwargs):
     assert 'TFMajorVersion' in kwargs
     assert 'containerSource' in kwargs
     tfp_install = 'tensorflow-probability'
-    if kwargs['TFMajorVersion'] == 1:
+    if kwargs['TFMajorVersion'] == 1 and '20.08' not in kwargs['base']:
+        tfp_install = 'tensorflow-probability==0.7'
+    elif kwargs['TFMajorVersion'] == 1:
         tfp_install = 'tensorflow-probability==0.8'
     if kwargs['containerSource'] == 'tensorflow':
         tfp_install = 'tensorflow-probability==0.10.0'
