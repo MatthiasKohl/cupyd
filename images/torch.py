@@ -15,4 +15,9 @@ def images():
             "containerSource": "NGC",
             "needsContext": True,
         },
+        "torch:20.08": {
+            "base": "nvcr.io/nvidia/pytorch:20.08-py3",
+            "containerSource": "NGC",
+            "needsContext": True,
+        },
     }

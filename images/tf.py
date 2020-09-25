@@ -1,61 +1,52 @@
 import modules.runas
 import modules.ssh
 
+
 def emit(writer, **kwargs):
     # everything is already installed, just add runas and ssh
     modules.runas.emit(writer)
     modules.ssh.emit(writer)
     writer.packages(['graphviz'])
-    assert 'TFMajorVersion' in kwargs
-    assert 'containerSource' in kwargs
+    assert 'TFVersion' in kwargs
     tfp_install = 'tensorflow-probability'
-    if kwargs['TFMajorVersion'] == 1 and '20.08' not in kwargs['base']:
+    if kwargs['TFVersion'] <= '1.15.2':
         tfp_install = 'tensorflow-probability==0.7'
-    elif kwargs['TFMajorVersion'] == 1:
+    elif kwargs['TFVersion'] <= "1.15.3":
         tfp_install = 'tensorflow-probability==0.8'
-    if kwargs['containerSource'] == 'tensorflow':
-        tfp_install = 'tensorflow-probability==0.10.0'
+    elif kwargs['TFVersion'] <= '2.2.0':
+        tfp_install = 'tensorflow-probability==0.10.1'
+    else:
+        tfp_install = 'tensorflow-probability'
     writer.emit("""
         RUN pip install $tfp_install fs pendulum Pillow
     """, tfp_install=tfp_install)
+
 
 def images():
     return {
         "tf:20.03": {
             "base": "nvcr.io/nvidia/tensorflow:20.03-tf2-py3",
-            "TFMajorVersion": 2,
-            "containerSource": "NGC",
+            "TFVersion": "2.1.0",
             "needsContext": True,
         },
         "tf1:20.03": {
             "base": "nvcr.io/nvidia/tensorflow:20.03-tf1-py3",
-            "TFMajorVersion": 1,
-            "containerSource": "NGC",
+            "TFVersion": "1.15.2",
             "needsContext": True,
         },
         "tf1:20.08": {
             "base": "nvcr.io/nvidia/tensorflow:20.08-tf1-py3",
-            "TFMajorVersion": 1,
-            "containerSource": "NGC",
+            "TFVersion": "1.15.3",
             "needsContext": True,
         },
-        "tf:2.2.0": {
-            "base": "tensorflow/tensorflow:2.2.0-gpu",
-            "TFMajorVersion": 2,
-            "containerSource": "tensorflow",
+        "tf:20.08": {
+            "base": "nvcr.io/nvidia/tensorflow:20.08-tf2-py3",
+            "TFVersion": "2.2.0",
             "needsContext": True,
         },
         "tf1:19.09": {
             "base": "nvcr.io/nvidia/tensorflow:19.09-py3",
-            "TFMajorVersion": 1,
-            "containerSource": "NGC",
+            "TFVersion": "1.14.0",
             "needsContext": True,
         },
-        "tf-dev:20.03": {
-            "base": "nvcr.io/nvidia/tensorflow:20.03-tf1-py3",
-            "TFMajorVersion": 1,
-            "containerSource": "NGC",
-            "needsContext": True,
-            "dev": True,
-        }
     }
