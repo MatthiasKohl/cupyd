@@ -11,7 +11,7 @@ def emit(writer, **kwargs):
     tfp_install = 'tensorflow-probability'
     if kwargs['TFVersion'] <= '1.15.2':
         tfp_install = 'tensorflow-probability==0.7'
-    elif kwargs['TFVersion'] <= "1.15.3":
+    elif kwargs['TFVersion'] <= "1.15.4":
         tfp_install = 'tensorflow-probability==0.8'
     elif kwargs['TFVersion'] <= '2.2.0':
         tfp_install = 'tensorflow-probability==0.10.1'
@@ -47,6 +47,16 @@ def images():
         "tf1:19.09": {
             "base": "nvcr.io/nvidia/tensorflow:19.09-py3",
             "TFVersion": "1.14.0",
+            "needsContext": True,
+        },
+        "tf1:20.11": {
+            "base": "nvcr.io/nvidia/tensorflow:20.11-tf1-py3",
+            "TFVersion": "1.15.4",
+            "needsContext": True,
+        },
+        "tf1:20.12": {
+            "base": "gitlab-master.nvidia.com:5005/dl/dgx/tensorflow:20.12-tf1-py3-devel",
+            "TFVersion": "1.15.4",
             "needsContext": True,
         },
     }
