@@ -59,4 +59,9 @@ def images():
             "TFVersion": "1.15.4",
             "needsContext": True,
         },
+        "tf1:20.12-master": {
+            "base": "gitlab-master.nvidia.com:5005/dl/dgx/tensorflow:master-tf1-py3.1854369-devel",
+            "TFVersion": "1.15.4",
+            "needsContext": True,
+        },
     }
