@@ -15,6 +15,8 @@ def emit(writer, **kwargs):
         tfp_install = 'tensorflow-probability==0.8'
     elif kwargs['TFVersion'] <= '2.2.0':
         tfp_install = 'tensorflow-probability==0.10.1'
+    elif kwargs['TFVersion'] <= '2.3.1':
+        tfp_install = 'tensorflow-probability==0.11.1'
     else:
         tfp_install = 'tensorflow-probability'
     writer.emit("""
@@ -55,13 +57,23 @@ def images():
             "needsContext": True,
         },
         "tf1:20.12": {
-            "base": "gitlab-master.nvidia.com:5005/dl/dgx/tensorflow:20.12-tf1-py3-devel",
+            "base": "nvcr.io/nvidia/tensorflow:20.12-tf1-py3",
             "TFVersion": "1.15.4",
             "needsContext": True,
         },
         "tf1:20.12-master": {
             "base": "gitlab-master.nvidia.com:5005/dl/dgx/tensorflow:master-tf1-py3.1854369-devel",
             "TFVersion": "1.15.4",
+            "needsContext": True,
+        },
+        "tf2:20.12": {
+            "base": "nvcr.io/nvidia/tensorflow:20.12-tf2-py3",
+            "TFVersion": "2.3.1",
+            "needsContext": True,
+        },
+        "tf2:20.12-master": {
+            "base": "gitlab-master.nvidia.com:5005/dl/dgx/tensorflow:master-py3.1927420-devel",
+            "TFVersion": "2.3.1",
             "needsContext": True,
         },
     }
