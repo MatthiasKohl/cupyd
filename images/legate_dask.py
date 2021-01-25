@@ -44,6 +44,12 @@ def images():
             "cudaVersionFull": "10.2.89",
             "needsContext": True,
         },
+        "legate-dask-0.18:11.0": {
+            "base": "rapidsai/rapidsai-core-dev-nightly:0.18-cuda11.0-devel-ubuntu18.04-py3.7",
+            "rapidsVersion": "0.18",
+            "cudaVersionFull": "11.0.1",
+            "needsContext": True,
+        },
         "legate-dask-debug:10.0": {
             "base": "rapidsai/rapidsai-dev:0.12-cuda10.0-devel-ubuntu16.04-py3.7",
             "rapidsVersion": "0.12",
