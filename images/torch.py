@@ -20,4 +20,14 @@ def images():
             "containerSource": "NGC",
             "needsContext": True,
         },
+        "torch:cuda-graphs-master": {
+            "base": "gitlab-master.nvidia.com:5005/dl/dgx/pytorch:cuda-graphs-master-py3-devel",
+            "containerSource": "gitlab",
+            "needsContext": True
+        },
+        "torch:cuda-graphs-master-56": {
+            "base": "gitlab-master.nvidia.com:5005/dl/dgx/pytorch:cuda-graphs-master-py3.1956997-devel",
+            "containerSource": "gitlab",
+            "needsContext": True
+        }
     }
